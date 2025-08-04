@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechStore - Promoções Especiais</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      overflow: hidden;
+    }
+    
+    .scrolling-text {
+      animation: scroll-left 25s linear infinite;
+    }
+    
+    .scrolling-products {
+      animation: scroll-up 30s linear infinite;
+    }
+    
+    @keyframes scroll-left {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+    
+    @keyframes scroll-up {
+      0% { transform: translateY(100%); }
+      100% { transform: translateY(-100%); }
+    }
+    
+    .video-placeholder {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      font-weight: 600;
+    }
+    
+    .product-image {
+      background: linear-gradient(45deg, #059669 0%, #10b981 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2.5rem;
+    }
+    
+    .tech-gradient {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    }
+    
+    .neon-text {
+      text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88;
+    }
+    
+    .price-highlight {
+      background: linear-gradient(45deg, #dc2626, #ef4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+  </style>
+</head>
+<body class="tech-gradient text-white font-mono">
+  
+  <!-- Header -->
+  <header class="bg-black bg-opacity-50 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity duration-300 absolute top-0 left-0 right-0 z-10">
+    <div class="px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <img src="https://ik.imagekit.io/ys8l6suo53/lojo%201.png?updatedAt=" alt="Lasertec Logo" class="h-12 w-auto" onerror="this.style.display='none';">
+          <h1 class="text-2xl lg:text-3xl font-bold neon-text">LASERTEC SUPRIMENTOS</h1>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 lg:gap-4">
+          <button onclick="openVideoManager()" class="bg-blue-600 hover:bg-blue-700 px-2 lg:px-4 py-2 rounded-lg font-semibold transition-all text-xs lg:text-sm">
+            📹 <span class="hidden sm:inline">Gerenciar</span> Vídeo
+          </button>
+          <button onclick="openProductManager()" class="bg-green-600 hover:bg-green-700 px-2 lg:px-4 py-2 rounded-lg font-semibold transition-all text-xs lg:text-sm">
+            🛒 <span class="hidden sm:inline">Gerenciar</span> Produtos
+          </button>
+          <button onclick="openBannerManager()" class="bg-red-600 hover:bg-red-700 px-2 lg:px-4 py-2 rounded-lg font-semibold transition-all text-xs lg:text-sm">
+            📝 <span class="hidden sm:inline">Editar</span> Faixa
+          </button>
+          <button onclick="exportData()" class="bg-purple-600 hover:bg-purple-700 px-2 lg:px-4 py-2 rounded-lg font-semibold transition-all text-xs lg:text-sm">
+            💾 <span class="hidden sm:inline">Backup</span>
+          </button>
+          <label class="bg-orange-600 hover:bg-orange-700 px-2 lg:px-4 py-2 rounded-lg font-semibold transition-all text-xs lg:text-sm cursor-pointer">
+            📂 <span class="hidden sm:inline">Restaurar</span>
+            <input type="file" accept=".json" onchange="importData(event)" class="hidden">
+          </label>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="flex h-screen pb-20 gap-4 p-4 pt-0"> <!-- Flex horizontal com gap -->
+    
+    <!-- Área do Vídeo -->
+    <div class="flex-1">
+      <div class="bg-black rounded-2xl overflow-hidden shadow-2xl h-full">
+        <div class="video-placeholder h-full">
+          <div class="text-center p-4">
+            <div class="text-4xl lg:text-8xl mb-3 lg:mb-6">🎬</div>
+            <div class="text-xl lg:text-4xl mb-2 lg:mb-4">VÍDEO PROMOCIONAL</div>
+            <div class="text-sm lg:text-xl opacity-80">Melhores Ofertas em Tecnologia!</div>
+            <div id="videoResolution" class="text-xs lg:text-sm text-yellow-400 mt-2">Resolução: Aguardando vídeo...</div>
+            <div class="mt-4 lg:mt-8 text-3xl lg:text-6xl animate-pulse">▶️</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Lista de Produtos ao lado do vídeo -->
+    <div id="productArea" class="w-80 overflow-hidden">
+      <div class="bg-black bg-opacity-95 rounded-xl h-full overflow-hidden backdrop-blur-sm border border-blue-500 shadow-xl">
+        <div class="p-2 bg-blue-600 bg-opacity-90 text-center">
+          <h3 class="text-sm font-bold">🛒 OFERTAS</h3>
+        </div>
+        
+
+        
+        <div class="relative overflow-hidden h-full">
+          <div id="productScroll" class="scrolling-products space-y-4 p-4 absolute w-full">
+            <!-- Produtos serão carregados dinamicamente -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Texto Passando Embaixo -->
+  <div class="fixed bottom-0 left-0 right-0 bg-red-600 text-white py-2 lg:py-4 overflow-hidden">
+    <div id="bannerText" class="scrolling-text whitespace-nowrap text-sm lg:text-2xl font-bold">
+      🔥 MEGA LIQUIDAÇÃO LASERTEC SUPRIMENTOS! Até 50% OFF em Notebooks, Monitores, Periféricos e Smartphones! 
+      💻 Frete Grátis para todo Brasil! 🚚 Parcele em até 12x sem juros! 💳 
+      Promoção válida até 31/12 ou enquanto durarem os estoques! ⚡ 
+      Aproveite agora e monte seu setup dos sonhos! 🎮 
+      LASERTEC SUPRIMENTOS - Sua loja de tecnologia! 💻🔥
+    </div>
+  </div>
+
+  <!-- Modal para Gerenciar Vídeo -->
+  <div id="videoModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-gray-800 rounded-xl max-w-lg w-full border border-blue-500 max-h-96 overflow-y-auto">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold text-white">📹 Gerenciar Vídeo</h3>
+          <button onclick="closeVideoManager()" class="text-gray-400 hover:text-white text-2xl">×</button>
+        </div>
+        
+        <!-- Informações sobre tamanhos recomendados -->
+        <div class="bg-blue-900 bg-opacity-50 rounded-lg p-4 mb-4 border border-blue-400">
+          <h4 class="text-sm font-bold text-blue-300 mb-2">📐 Tamanhos Recomendados</h4>
+          <div class="text-xs text-gray-300 space-y-1">
+            <div class="flex justify-between">
+              <span>🖥️ <strong>Desktop (16:9):</strong></span>
+              <span class="text-yellow-400">1920x1080px</span>
+            </div>
+            <div class="flex justify-between">
+              <span>📱 <strong>Mobile (9:16):</strong></span>
+              <span class="text-yellow-400">1080x1920px</span>
+            </div>
+            <div class="flex justify-between">
+              <span>⬜ <strong>Quadrado (1:1):</strong></span>
+              <span class="text-yellow-400">1080x1080px</span>
+            </div>
+            <div class="flex justify-between">
+              <span>📺 <strong>Widescreen (21:9):</strong></span>
+              <span class="text-yellow-400">2560x1080px</span>
+            </div>
+          </div>
+          <div class="mt-2 text-xs text-green-300">
+            💡 <strong>Dica:</strong> O sistema se adapta automaticamente, mas esses tamanhos garantem melhor qualidade!
+          </div>
+        </div>
+
+        <!-- Área de informações do vídeo atual -->
+        <div id="currentVideoInfo" class="bg-gray-700 bg-opacity-50 rounded-lg p-3 mb-4 border border-gray-500 hidden">
+          <h4 class="text-sm font-bold text-gray-300 mb-2">📊 Vídeo Atual</h4>
+          <div class="text-xs text-gray-300 space-y-1">
+            <div class="flex justify-between">
+              <span>Resolução:</span>
+              <span id="currentResolution" class="text-yellow-400">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Proporção:</span>
+              <span id="currentAspectRatio" class="text-yellow-400">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Tamanho:</span>
+              <span id="currentFileSize" class="text-yellow-400">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Duração:</span>
+              <span id="currentDuration" class="text-yellow-400">-</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Upload de Vídeo</label>
+            <input type="file" id="videoFile" accept="video/*" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white" onchange="analyzeVideoFile(this)">
+            <div class="text-xs text-gray-400 mt-1">Formatos: MP4, WebM, AVI, MOV (máx. 100MB)</div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Ou Cole URL do Vídeo</label>
+            <input type="url" id="videoUrl" placeholder="https://..." class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+            <div class="text-xs text-gray-400 mt-1">YouTube, Vimeo, links diretos (.mp4, .webm)</div>
+          </div>
+          
+          <!-- Preview do vídeo selecionado -->
+          <div id="videoPreview" class="hidden">
+            <label class="block text-sm font-medium text-gray-300 mb-2">👀 Preview</label>
+            <video id="previewVideo" class="w-full h-32 bg-black rounded-lg" controls muted></video>
+          </div>
+          
+          <button onclick="updateVideo()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold">
+            Atualizar Vídeo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Gerenciar Produtos -->
+  <div id="productModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-gray-800 rounded-xl max-w-md w-full border border-green-500 max-h-96 overflow-y-auto">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold text-white">🛒 Gerenciar Produtos</h3>
+          <button onclick="closeProductManager()" class="text-gray-400 hover:text-white text-2xl">×</button>
+        </div>
+        
+        <!-- Controle de Velocidade das Ofertas -->
+        <div class="mb-4 bg-blue-900 bg-opacity-50 rounded-lg p-4 border border-blue-400">
+          <h4 class="text-sm font-bold text-blue-300 mb-2">⚡ Velocidade das Ofertas</h4>
+          <div class="flex items-center justify-between">
+            <label class="text-xs text-gray-300">Velocidade:</label>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-gray-400">Lenta</span>
+              <input type="range" id="speedControlModal" min="10" max="60" value="30" class="w-20" onchange="updateSpeedFromModal(this.value)">
+              <span class="text-xs text-gray-400">Rápida</span>
+            </div>
+            <span id="speedValueModal" class="text-xs text-yellow-400 font-bold">30s</span>
+          </div>
+          <div class="text-xs text-green-300 mt-2">
+            💡 <strong>Dica:</strong> Velocidade menor = mais tempo para ler as ofertas
+          </div>
+        </div>
+
+        <!-- Lista de Produtos Existentes -->
+        <div class="mb-4 max-h-32 overflow-y-auto">
+          <h4 class="text-sm font-bold text-gray-300 mb-2">Produtos Atuais:</h4>
+          <div id="productList" class="space-y-1">
+            <!-- Produtos serão listados aqui -->
+          </div>
+        </div>
+        
+        <form onsubmit="addProduct(event)" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Nome do Produto</label>
+            <input type="text" id="productName" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white" required>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Descrição</label>
+            <input type="text" id="productDesc" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white" required>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Preço Original (R$)</label>
+              <input type="number" id="productOriginalPrice" step="0.01" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Preço Promocional (R$)</label>
+              <input type="number" id="productPrice" step="0.01" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white" required>
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Emoji do Produto</label>
+            <input type="text" id="productEmoji" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white" placeholder="💻" maxlength="2">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Upload de Foto</label>
+            <input type="file" id="productImage" accept="image/*" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2">
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-semibold">
+              Adicionar
+            </button>
+            <button type="button" onclick="clearAllProducts()" class="bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-semibold">
+              Limpar Todos
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Editar Faixa -->
+  <div id="bannerModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-gray-800 rounded-xl max-w-lg w-full border border-red-500">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold text-white">📝 Editar Faixa Promocional</h3>
+          <button onclick="closeBannerManager()" class="text-gray-400 hover:text-white text-2xl">×</button>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Texto da Faixa</label>
+            <textarea id="bannerTextInput" rows="4" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white" placeholder="Digite o texto promocional..."></textarea>
+          </div>
+          
+          <button onclick="updateBanner()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-semibold">
+            Atualizar Faixa
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Gerenciamento de Vídeo
+    function openVideoManager() {
+      document.getElementById('videoModal').classList.remove('hidden');
+    }
+    
+    function closeVideoManager() {
+      document.getElementById('videoModal').classList.add('hidden');
+      // Limpar preview
+      document.getElementById('videoPreview').classList.add('hidden');
+      document.getElementById('currentVideoInfo').classList.add('hidden');
+    }
+    
+    function analyzeVideoFile(input) {
+      const file = input.files[0];
+      if (!file) return;
+      
+      const videoPreview = document.getElementById('videoPreview');
+      const previewVideo = document.getElementById('previewVideo');
+      const currentVideoInfo = document.getElementById('currentVideoInfo');
+      
+      // Mostrar preview
+      previewVideo.src = URL.createObjectURL(file);
+      videoPreview.classList.remove('hidden');
+      
+      // Analisar propriedades do vídeo
+      previewVideo.addEventListener('loadedmetadata', function() {
+        const width = this.videoWidth;
+        const height = this.videoHeight;
+        const duration = this.duration;
+        const fileSize = file.size;
+        
+        // Calcular proporção
+        const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+        const divisor = gcd(width, height);
+        const aspectRatio = `${width/divisor}:${height/divisor}`;
+        
+        // Formatar tamanho do arquivo
+        const formatFileSize = (bytes) => {
+          if (bytes === 0) return '0 Bytes';
+          const k = 1024;
+          const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+          const i = Math.floor(Math.log(bytes) / Math.log(k));
+          return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        };
+        
+        // Formatar duração
+        const formatDuration = (seconds) => {
+          const mins = Math.floor(seconds / 60);
+          const secs = Math.floor(seconds % 60);
+          return `${mins}:${secs.toString().padStart(2, '0')}`;
+        };
+        
+        // Atualizar informações
+        document.getElementById('currentResolution').textContent = `${width}x${height}px`;
+        document.getElementById('currentAspectRatio').textContent = aspectRatio;
+        document.getElementById('currentFileSize').textContent = formatFileSize(fileSize);
+        document.getElementById('currentDuration').textContent = formatDuration(duration);
+        
+        // Mostrar área de informações
+        currentVideoInfo.classList.remove('hidden');
+        
+        // Dar recomendações baseadas na proporção
+        showVideoRecommendations(aspectRatio, width, height);
+      });
+    }
+    
+    function showVideoRecommendations(aspectRatio, width, height) {
+      // Remover recomendações anteriores
+      const existingRecommendation = document.getElementById('videoRecommendation');
+      if (existingRecommendation) {
+        existingRecommendation.remove();
+      }
+      
+      let recommendationText = '';
+      let recommendationColor = 'green';
+      
+      // Analisar proporção e dar recomendações
+      if (aspectRatio === '16:9') {
+        if (width >= 1920 && height >= 1080) {
+          recommendationText = '✅ Perfeito! Proporção ideal para desktop com boa qualidade.';
+        } else {
+          recommendationText = '⚠️ Proporção boa, mas resolução baixa. Recomendado: 1920x1080px.';
+          recommendationColor = 'yellow';
+        }
+      } else if (aspectRatio === '9:16') {
+        if (width >= 1080 && height >= 1920) {
+          recommendationText = '✅ Excelente! Formato vertical ideal para mobile.';
+        } else {
+          recommendationText = '⚠️ Formato vertical, mas resolução baixa. Recomendado: 1080x1920px.';
+          recommendationColor = 'yellow';
+        }
+      } else if (aspectRatio === '1:1') {
+        if (width >= 1080 && height >= 1080) {
+          recommendationText = '✅ Ótimo! Formato quadrado com boa resolução.';
+        } else {
+          recommendationText = '⚠️ Formato quadrado, mas resolução baixa. Recomendado: 1080x1080px.';
+          recommendationColor = 'yellow';
+        }
+      } else if (aspectRatio === '21:9') {
+        recommendationText = '✅ Formato widescreen! Ideal para apresentações cinematográficas.';
+      } else {
+        recommendationText = '⚠️ Proporção não padrão. Pode haver cortes ou barras pretas.';
+        recommendationColor = 'red';
+      }
+      
+      // Criar elemento de recomendação
+      const recommendation = document.createElement('div');
+      recommendation.id = 'videoRecommendation';
+      recommendation.className = `bg-${recommendationColor}-900 bg-opacity-50 rounded-lg p-3 mt-2 border border-${recommendationColor}-400`;
+      recommendation.innerHTML = `
+        <div class="text-xs text-${recommendationColor}-300">
+          <strong>💡 Recomendação:</strong><br>
+          ${recommendationText}
+        </div>
+      `;
+      
+      // Inserir após as informações do vídeo
+      document.getElementById('currentVideoInfo').appendChild(recommendation);
+    }
+    
+    function updateVideo() {
+      const videoFile = document.getElementById('videoFile').files[0];
+      const videoUrl = document.getElementById('videoUrl').value;
+      const videoPlaceholder = document.querySelector('.video-placeholder');
+      
+      if (videoFile) {
+        const videoElement = document.createElement('video');
+        videoElement.src = URL.createObjectURL(videoFile);
+        videoElement.controls = true;
+        videoElement.loop = true;
+        videoElement.autoplay = true;
+        videoElement.muted = true;
+        videoElement.className = 'w-full h-full object-cover';
+        
+        // Detectar resolução do vídeo
+        videoElement.addEventListener('loadedmetadata', function() {
+          const resolution = `${this.videoWidth}x${this.videoHeight}`;
+          const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+          const divisor = gcd(this.videoWidth, this.videoHeight);
+          const aspectRatio = `${this.videoWidth/divisor}:${this.videoHeight/divisor}`;
+          
+          document.getElementById('videoResolution').textContent = `Resolução: ${resolution} (${aspectRatio})`;
+        });
+        
+        videoPlaceholder.innerHTML = '';
+        videoPlaceholder.appendChild(videoElement);
+      } else if (videoUrl) {
+        const videoElement = document.createElement('video');
+        videoElement.src = videoUrl;
+        videoElement.controls = true;
+        videoElement.loop = true;
+        videoElement.autoplay = true;
+        videoElement.muted = true;
+        videoElement.className = 'w-full h-full object-cover';
+        
+        // Detectar resolução do vídeo
+        videoElement.addEventListener('loadedmetadata', function() {
+          const resolution = `${this.videoWidth}x${this.videoHeight}`;
+          const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+          const divisor = gcd(this.videoWidth, this.videoHeight);
+          const aspectRatio = `${this.videoWidth/divisor}:${this.videoHeight/divisor}`;
+          
+          document.getElementById('videoResolution').textContent = `Resolução: ${resolution} (${aspectRatio})`;
+        });
+        
+        videoPlaceholder.innerHTML = '';
+        videoPlaceholder.appendChild(videoElement);
+      }
+      
+      closeVideoManager();
+    }
+    
+    // Array para armazenar produtos
+    let products = [];
+    let productIdCounter = 1;
+    
+    // Gerenciamento de Produtos
+    function openProductManager() {
+      updateProductList();
+      document.getElementById('productModal').classList.remove('hidden');
+    }
+    
+    function closeProductManager() {
+      document.getElementById('productModal').classList.add('hidden');
+    }
+    
+    function addProduct(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('productName').value;
+      const desc = document.getElementById('productDesc').value;
+      const originalPrice = document.getElementById('productOriginalPrice').value;
+      const price = document.getElementById('productPrice').value;
+      const emoji = document.getElementById('productEmoji').value || '🛍️';
+      const imageFile = document.getElementById('productImage').files[0];
+      
+      const discount = Math.round(((originalPrice - price) / originalPrice) * 100);
+      
+      // Criar objeto produto
+      const product = {
+        id: productIdCounter++,
+        name: name,
+        desc: desc,
+        originalPrice: originalPrice,
+        price: price,
+        emoji: emoji,
+        discount: discount,
+        imageUrl: null
+      };
+      
+      if (imageFile) {
+        product.imageUrl = URL.createObjectURL(imageFile);
+      }
+      
+      // Adicionar ao array
+      products.push(product);
+      
+      // Atualizar display
+      updateProductDisplay();
+      updateProductList();
+      
+      // Salvar automaticamente
+      saveToStorage();
+      
+      // Limpar formulário
+      document.getElementById('productName').value = '';
+      document.getElementById('productDesc').value = '';
+      document.getElementById('productOriginalPrice').value = '';
+      document.getElementById('productPrice').value = '';
+      document.getElementById('productEmoji').value = '';
+      document.getElementById('productImage').value = '';
+      
+      closeProductManager();
+    }
+    
+    function updateProductDisplay() {
+      const productScroll = document.querySelector('.scrolling-products');
+      productScroll.innerHTML = '';
+      
+      products.forEach(product => {
+        const productDiv = document.createElement('div');
+        productDiv.className = 'bg-gray-800 bg-opacity-90 rounded-lg p-2 border border-blue-500';
+        productDiv.setAttribute('data-product-id', product.id);
+        
+        let imageContent = product.emoji;
+        if (product.imageUrl) {
+          imageContent = `<img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover rounded-lg">`;
+        }
+        
+        productDiv.innerHTML = `
+          <div class="product-image w-full h-12 rounded-lg mb-2 text-lg">
+            ${imageContent}
+          </div>
+          <h4 class="font-bold text-green-400 mb-1 text-sm">${product.name}</h4>
+          <p class="text-xs text-gray-300 mb-2">${product.desc}</p>
+          <div class="text-center">
+            <div class="text-xs text-gray-400 line-through">R$ ${parseFloat(product.originalPrice).toFixed(2)}</div>
+            <div class="text-sm font-bold price-highlight">R$ ${parseFloat(product.price).toFixed(2)}</div>
+            <div class="text-xs text-yellow-400">💥 ${product.discount}% OFF</div>
+          </div>
+        `;
+        
+        productScroll.appendChild(productDiv);
+      });
+    }
+    
+    function updateProductList() {
+      const productList = document.getElementById('productList');
+      productList.innerHTML = '';
+      
+      if (products.length === 0) {
+        productList.innerHTML = '<p class="text-xs text-gray-400">Nenhum produto adicionado</p>';
+        return;
+      }
+      
+      products.forEach(product => {
+        const productItem = document.createElement('div');
+        productItem.className = 'flex items-center justify-between bg-gray-700 rounded px-2 py-1';
+        productItem.innerHTML = `
+          <span class="text-xs text-white">${product.emoji} ${product.name}</span>
+          <button onclick="removeProduct(${product.id})" class="text-red-400 hover:text-red-300 text-xs">🗑️</button>
+        `;
+        productList.appendChild(productItem);
+      });
+    }
+    
+    function removeProduct(productId) {
+      products = products.filter(product => product.id !== productId);
+      updateProductDisplay();
+      updateProductList();
+      saveToStorage();
+    }
+    
+    function clearAllProducts() {
+      if (confirm('Tem certeza que deseja remover todos os produtos?')) {
+        products = [];
+        updateProductDisplay();
+        updateProductList();
+        saveToStorage();
+      }
+    }
+    
+    // Gerenciamento da Faixa
+    function openBannerManager() {
+      const currentText = document.getElementById('bannerText').textContent;
+      document.getElementById('bannerTextInput').value = currentText;
+      document.getElementById('bannerModal').classList.remove('hidden');
+    }
+    
+    function closeBannerManager() {
+      document.getElementById('bannerModal').classList.add('hidden');
+    }
+    
+    function updateBanner() {
+      const newText = document.getElementById('bannerTextInput').value;
+      document.getElementById('bannerText').textContent = newText;
+      saveToStorage();
+      closeBannerManager();
+    }
+    
+    // Simular interação com o vídeo
+    document.querySelector('.video-placeholder').addEventListener('click', function() {
+      this.innerHTML = `
+        <div class="text-center">
+          <div class="text-8xl mb-6">⏸️</div>
+          <div class="text-4xl mb-4">REPRODUZINDO...</div>
+          <div class="text-xl opacity-80">Ofertas Incríveis em Tecnologia!</div>
+          <div class="mt-8 text-2xl text-green-400">🔴 AO VIVO</div>
+        </div>
+      `;
+      
+      setTimeout(() => {
+        this.innerHTML = `
+          <div class="text-center">
+            <div class="text-8xl mb-6">🎬</div>
+            <div class="text-4xl mb-4">VÍDEO PROMOCIONAL</div>
+            <div class="text-xl opacity-80">Melhores Ofertas em Tecnologia!</div>
+            <div class="mt-8 text-6xl animate-pulse">▶️</div>
+          </div>
+        `;
+      }, 5000);
+    });
+    
+    // Função para atualizar velocidade a partir do modal
+    function updateSpeedFromModal(value) {
+      const productScroll = document.getElementById('productScroll');
+      const speedValueModal = document.getElementById('speedValueModal');
+      
+      productScroll.style.animationDuration = value + 's';
+      speedValueModal.textContent = value + 's';
+      saveToStorage();
+    }
+    
+
+    
+    // Efeito de piscar nos preços
+    setInterval(() => {
+      const prices = document.querySelectorAll('.price-highlight');
+      prices.forEach(price => {
+        price.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+          price.style.transform = 'scale(1)';
+        }, 200);
+      });
+    }, 3000);
+    
+    // Inicializar com produtos de exemplo
+    function initializeProducts() {
+      const sampleProducts = [
+        { name: 'Notebook Gamer', desc: 'Intel i7, 16GB', originalPrice: 4999, price: 3499, emoji: '💻' },
+        { name: 'Monitor 4K 27"', desc: 'IPS, HDR, 144Hz', originalPrice: 1899, price: 1299, emoji: '🖥️' },
+        { name: 'Teclado RGB', desc: 'Switch Blue', originalPrice: 399, price: 249, emoji: '⌨️' },
+        { name: 'Mouse Gamer', desc: '12000 DPI, RGB', originalPrice: 299, price: 179, emoji: '🖱️' },
+        { name: 'Headset 7.1', desc: 'Surround', originalPrice: 599, price: 349, emoji: '🎧' }
+      ];
+      
+      sampleProducts.forEach(product => {
+        const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+        products.push({
+          id: productIdCounter++,
+          name: product.name,
+          desc: product.desc,
+          originalPrice: product.originalPrice,
+          price: product.price,
+          emoji: product.emoji,
+          discount: discount,
+          imageUrl: null
+        });
+      });
+      
+      updateProductDisplay();
+    }
+    
+    // Sistema de Salvamento Automático
+    function saveToStorage() {
+      const data = {
+        products: products,
+        bannerText: document.getElementById('bannerText').textContent,
+        speedValue: document.getElementById('speedControlModal') ? document.getElementById('speedControlModal').value : '30',
+        lastSaved: new Date().toISOString()
+      };
+      
+      try {
+        localStorage.setItem('lasertecData', JSON.stringify(data));
+        console.log('✅ Dados salvos automaticamente!');
+      } catch (error) {
+        console.warn('⚠️ Erro ao salvar dados:', error);
+      }
+    }
+    
+    function loadFromStorage() {
+      try {
+        const savedData = localStorage.getItem('lasertecData');
+        if (savedData) {
+          const data = JSON.parse(savedData);
+          
+          // Restaurar produtos
+          if (data.products && data.products.length > 0) {
+            products = data.products;
+            productIdCounter = Math.max(...products.map(p => p.id)) + 1;
+            updateProductDisplay();
+          } else {
+            initializeProducts(); // Usar produtos de exemplo se não houver salvos
+          }
+          
+          // Restaurar texto da faixa
+          if (data.bannerText) {
+            document.getElementById('bannerText').textContent = data.bannerText;
+          }
+          
+          // Restaurar velocidade
+          if (data.speedValue) {
+            const speedControl = document.getElementById('speedControlModal');
+            const speedValue = document.getElementById('speedValueModal');
+            const productScroll = document.getElementById('productScroll');
+            
+            if (speedControl) speedControl.value = data.speedValue;
+            if (speedValue) speedValue.textContent = data.speedValue + 's';
+            if (productScroll) productScroll.style.animationDuration = data.speedValue + 's';
+          }
+          
+          console.log('✅ Dados carregados com sucesso!');
+          console.log('📅 Última atualização:', new Date(data.lastSaved).toLocaleString('pt-BR'));
+          
+          return true;
+        }
+      } catch (error) {
+        console.warn('⚠️ Erro ao carregar dados salvos:', error);
+      }
+      
+      // Se não conseguiu carregar, usar dados padrão
+      initializeProducts();
+      return false;
+    }
+    
+    function exportData() {
+      const data = {
+        products: products,
+        bannerText: document.getElementById('bannerText').textContent,
+        speedValue: document.getElementById('speedControlModal') ? document.getElementById('speedControlModal').value : '30',
+        exportDate: new Date().toISOString(),
+        version: '1.0'
+      };
+      
+      const dataStr = JSON.stringify(data, null, 2);
+      const dataBlob = new Blob([dataStr], {type: 'application/json'});
+      const url = URL.createObjectURL(dataBlob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `lasertec-backup-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      alert('✅ Backup exportado com sucesso!');
+    }
+    
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          
+          // Validar estrutura dos dados
+          if (data.products && Array.isArray(data.products)) {
+            products = data.products;
+            productIdCounter = Math.max(...products.map(p => p.id)) + 1;
+            updateProductDisplay();
+          }
+          
+          if (data.bannerText) {
+            document.getElementById('bannerText').textContent = data.bannerText;
+          }
+          
+          if (data.speedValue) {
+            const speedControl = document.getElementById('speedControlModal');
+            const speedValue = document.getElementById('speedValueModal');
+            const productScroll = document.getElementById('productScroll');
+            
+            if (speedControl) speedControl.value = data.speedValue;
+            if (speedValue) speedValue.textContent = data.speedValue + 's';
+            if (productScroll) productScroll.style.animationDuration = data.speedValue + 's';
+          }
+          
+          // Salvar os dados importados
+          saveToStorage();
+          
+          alert('✅ Dados importados com sucesso!');
+          console.log('📅 Backup importado de:', new Date(data.exportDate).toLocaleString('pt-BR'));
+          
+        } catch (error) {
+          alert('❌ Erro ao importar arquivo. Verifique se é um backup válido.');
+          console.error('Erro na importação:', error);
+        }
+      };
+      
+      reader.readAsText(file);
+      event.target.value = ''; // Limpar input
+    }
+    
+    // Inicializar quando a página carregar
+    document.addEventListener('DOMContentLoaded', function() {
+      const dataLoaded = loadFromStorage();
+      
+      if (dataLoaded) {
+        // Mostrar notificação de dados carregados
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm';
+        notification.innerHTML = '✅ Configurações carregadas!';
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+          notification.remove();
+        }, 3000);
+      }
+    });
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'969e7cd241a364f1',t:'MTc1NDMxNTA0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
